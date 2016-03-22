@@ -14,10 +14,19 @@ public class UndoGUI {
 	private JTextField text;
 	private JList list;
 	
+	private ActionAnnuler annuler;
+	private ActionAdd add;
+	
+	
 	UndoGUI() {
 		// JFrame
 		JFrame fen = new JFrame("Undo/Redo");
 		fen.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		
+		//Actions
+		annuler = new ActionAnnuler("Annuler");
+		annuler.setEnabled(false);
+		add = new ActionAdd("Ajouter");
 		
 		// Liste
 		listModel = new DefaultListModel();
@@ -27,15 +36,11 @@ public class UndoGUI {
 		list = new JList(listModel);
 		JScrollPane listScroller = new JScrollPane(list);
 		text = new JTextField();
+		text.setAction(add);
 		JButton boutonAjouter = new JButton("Ajouter");
-		boutonAjouter.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				if (text.getText().length() > 0) {
-					listModel.addElement(text.getText());
-					text.setText("");
-				} 
-			} 
-		});
+		boutonAjouter.setAction(add);
+		
+		
 		
 		// Menu
 		JMenuBar menuBar = new JMenuBar();
@@ -44,6 +49,7 @@ public class UndoGUI {
 		JMenuItem menuItem = new JMenuItem("Supprimer");
 		menu.add(menuItem);
 		menuItem = new JMenuItem("Annuler");
+		menuItem.setAction(annuler);
 		menu.add(menuItem);
 		menuItem = new JMenuItem("Refaire");
 		menu.add(menuItem);
@@ -59,7 +65,12 @@ public class UndoGUI {
 		});
 		
 		JButton boutonAnnuler = new JButton("Annuler");
+		boutonAnnuler.setAction(annuler);
+		
+
 		JButton boutonRefaire = new JButton("Refaire");
+		boutonRefaire.setAction(annuler);
+
 		toolBar.add(boutonSupprimer);
 		toolBar.add(boutonAnnuler);
 		toolBar.add(boutonRefaire);
@@ -82,6 +93,33 @@ public class UndoGUI {
 			new UndoGUI();
 		    }
 		});
+	}
+	
+	private class ActionAnnuler extends AbstractAction{
+		
+		public ActionAnnuler(String s){
+			super(s);
+		}
+		
+		public void actionPerformed(ActionEvent e) {
+			System.out.println("annuler");
+		}
+	}
+	
+
+	private class ActionAdd extends AbstractAction{
+
+		public ActionAdd(String s){
+			super(s);
+			this.putValue(MNEMONIC_KEY, new Integer(KeyEvent.VK_ENTER));
+		}
+		
+		public void actionPerformed(ActionEvent e) {
+			System.out.println("Ajouter");
+			listModel.addElement(text.getText());
+			text.setText("");
+		}
+		
 	}
 
 }
