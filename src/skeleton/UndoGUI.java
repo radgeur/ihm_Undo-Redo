@@ -14,7 +14,9 @@ public class UndoGUI {
 	private JTextField text;
 	private JList list;
 	
-	private ActionAnnuler annuler;
+	private ActionUndo undo;
+	private ActionRedo redo;
+	private ActionDel del;
 	private ActionAdd add;
 	
 	
@@ -24,9 +26,11 @@ public class UndoGUI {
 		fen.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		
 		//Actions
-		annuler = new ActionAnnuler("Annuler");
-		annuler.setEnabled(false);
+		undo = new ActionUndo("Annuler");
+		undo.setEnabled(false);
 		add = new ActionAdd("Ajouter");
+		del = new ActionDel("Supprimer");
+		redo = new ActionRedo("Refaire");
 		
 		// Liste
 		listModel = new DefaultListModel();
@@ -47,29 +51,26 @@ public class UndoGUI {
 		JMenu menu = new JMenu("Edition");
 		menuBar.add(menu);
 		JMenuItem menuItem = new JMenuItem("Supprimer");
+		menuItem.setAction(del);
 		menu.add(menuItem);
 		menuItem = new JMenuItem("Annuler");
-		menuItem.setAction(annuler);
+		menuItem.setAction(undo);
 		menu.add(menuItem);
 		menuItem = new JMenuItem("Refaire");
+		menuItem.setAction(redo);
 		menu.add(menuItem);
 		
 		// ToolBar
 		JToolBar toolBar = new JToolBar("Barre d'outils");
 		JButton boutonSupprimer = new JButton("Supprimer");
-		boutonSupprimer.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-			    int index = list.getSelectedIndex();
-			    if (index != -1) listModel.remove(index);
-			} 
-		});
+		boutonSupprimer.setAction(del);
 		
 		JButton boutonAnnuler = new JButton("Annuler");
-		boutonAnnuler.setAction(annuler);
+		boutonAnnuler.setAction(undo);
 		
 
 		JButton boutonRefaire = new JButton("Refaire");
-		boutonRefaire.setAction(annuler);
+		boutonRefaire.setAction(redo);
 
 		toolBar.add(boutonSupprimer);
 		toolBar.add(boutonAnnuler);
@@ -95,14 +96,25 @@ public class UndoGUI {
 		});
 	}
 	
-	private class ActionAnnuler extends AbstractAction{
+	private class ActionUndo extends AbstractAction{
 		
-		public ActionAnnuler(String s){
+		public ActionUndo(String s){
 			super(s);
 		}
 		
 		public void actionPerformed(ActionEvent e) {
-			System.out.println("annuler");
+			System.out.println("Annuler");
+		}
+	}
+	
+	private class ActionRedo extends AbstractAction{
+		
+		public ActionRedo(String s){
+			super(s);
+		}
+		
+		public void actionPerformed(ActionEvent e) {
+			System.out.println("Refaire");
 		}
 	}
 	
@@ -118,6 +130,20 @@ public class UndoGUI {
 			System.out.println("Ajouter");
 			listModel.addElement(text.getText());
 			text.setText("");
+		}
+		
+	}
+	
+	private class ActionDel extends AbstractAction{
+
+		public ActionDel(String s){
+			super(s);
+		}
+		
+		public void actionPerformed(ActionEvent e) {
+			System.out.println("Supprimer");
+			int index = list.getSelectedIndex();
+		    if (index != -1) listModel.remove(index);
 		}
 		
 	}
